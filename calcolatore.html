@@ -92,6 +92,12 @@
   .res-net{background:var(--green-soft);border-top:1px solid var(--line)}
   .res-net .lbl{color:var(--green)}
   .res-net .big{color:var(--green)}
+  .res-buoni{background:#fffbeb;border-top:1px solid var(--line)}
+  .res-buoni .lbl{color:#b45309}
+  .res-buoni .big{color:#b45309}
+  .res-tot{background:linear-gradient(135deg,var(--bg1),var(--bg2));border-top:1px solid var(--line)}
+  .res-tot .lbl{color:rgba(255,255,255,.85)}
+  .res-tot .big{color:#fff}
 
   .err{margin-top:14px;color:#b91c1c;background:#fef2f2;border:1px solid #fecaca;padding:10px 12px;border-radius:10px;font-size:13px;display:none}
   .err.show{display:block}
@@ -192,6 +198,11 @@
           <div class="lab">Ore al +50%<small>festivi / straordinario</small></div>
           <div class="in"><input id="h50" type="number" min="0" placeholder="0"><span>h</span></div>
         </div>
+        <div class="row">
+          <span class="dot" style="background:#f59e0b"></span>
+          <div class="lab">Turni lavorati<small>per i buoni pasto (8 € a turno)</small></div>
+          <div class="in"><input id="turniPaga" type="number" min="0" placeholder="0"><span>turni</span></div>
+        </div>
 
         <button class="calc" id="calcPaga">Calcola stipendio</button>
 
@@ -212,6 +223,15 @@
             <div class="big" id="pagaNetto">—</div>
             <div class="sub">stima ricavata dalle tue buste paga · regolabile qui sotto</div>
           </div>
+          <div class="res-block res-buoni">
+            <div class="lbl">Buoni pasto</div>
+            <div class="big" id="pagaBuoni">—</div>
+            <div class="sub" id="pagaBuoniSub"></div>
+          </div>
+          <div class="res-block res-tot">
+            <div class="lbl">Totale (netto + buoni pasto)</div>
+            <div class="big" id="pagaTot">—</div>
+          </div>
         </div>
 
         <details>
@@ -227,6 +247,7 @@
           <div class="set-row"><label>Paga +35%</label><div class="in"><input id="r35" type="number" step="0.01" value="15.32"><span>€/h</span></div></div>
           <div class="set-row"><label>Paga +50%</label><div class="in"><input id="r50" type="number" step="0.01" value="17.03"><span>€/h</span></div></div>
           <div class="set-row"><label>% netto sul lordo</label><div class="in"><input id="rNet" type="number" step="1" value="90"><span>%</span></div></div>
+          <div class="set-row"><label>Buono pasto a turno</label><div class="in"><input id="rBuono" type="number" step="0.01" value="8"><span>€</span></div></div>
         </details>
       </div>
 
@@ -291,9 +312,10 @@
     err.classList.remove('show'); res.classList.remove('show');
 
     var h = { norm:num('hNorm'), h18:num('h18'), h25:num('h25'), h35:num('h35'), h50:num('h50') };
-    var r = { norm:num('rNorm'), h18:num('r18'), h25:num('r25'), h35:num('r35'), h50:num('r50'), net:num('rNet') };
+    var turni = num('turniPaga');
+    var r = { norm:num('rNorm'), h18:num('r18'), h25:num('r25'), h35:num('r35'), h50:num('r50'), net:num('rNet'), buono:num('rBuono') };
 
-    var allVals = [h.norm,h.h18,h.h25,h.h35,h.h50,r.norm,r.h18,r.h25,r.h35,r.h50,r.net];
+    var allVals = [h.norm,h.h18,h.h25,h.h35,h.h50,turni,r.norm,r.h18,r.h25,r.h35,r.h50,r.net,r.buono];
     if(allVals.some(function(x){return x===null})){
       err.textContent='Controlla i valori: usa solo numeri positivi.'; err.classList.add('show'); return;
     }
@@ -305,11 +327,16 @@
 
     var lordo = h.norm*r.norm + h.h18*r.h18 + h.h25*r.h25 + h.h35*r.h35 + h.h50*r.h50;
     var netto = lordo * (r.net/100);
+    var buoni = turni * r.buono;
+    var totale = netto + buoni;
 
     document.getElementById('pagaHours').textContent = oreTxt(totH*60) + ' ('+ totH.toString().replace('.',',') +'h)';
     document.getElementById('pagaLordo').textContent = euro(lordo);
     document.getElementById('pagaLordoSub').textContent = 'per ' + totH.toString().replace('.',',') + ' ore lavorate';
     document.getElementById('pagaNetto').textContent = euro(netto);
+    document.getElementById('pagaBuoni').textContent = euro(buoni);
+    document.getElementById('pagaBuoniSub').textContent = turni.toString().replace('.',',') + ' turni × ' + euro(r.buono);
+    document.getElementById('pagaTot').textContent = euro(totale);
     res.classList.add('show');
   }
 
