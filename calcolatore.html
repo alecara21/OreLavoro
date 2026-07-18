@@ -69,6 +69,10 @@
   .row .lab small{display:block;font-weight:400;color:var(--muted);font-size:11.5px}
   .row .in{width:110px;position:relative}
   .row .in span{position:absolute;right:11px;top:50%;transform:translateY(-50%);font-size:12px;color:var(--muted);pointer-events:none}
+  .row .in2{width:128px;display:flex;gap:6px;flex:0 0 auto}
+  .row .in2 .mini{position:relative;flex:1}
+  .row .in2 .mini input{width:100%;padding:11px 22px 11px 8px;font-size:14px}
+  .row .in2 .mini span{position:absolute;right:7px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--muted);pointer-events:none}
   .dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
   .subhead{font-size:12.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin:16px 0 10px}
   .subhead small{display:block;font-weight:400;text-transform:none;letter-spacing:0;font-size:11.5px;margin-top:2px}
@@ -173,7 +177,10 @@
       <div class="panel" id="panel-paga">
         <div class="field">
           <label>Ore totali lavorate <span class="hint">(quante ore hai fatto in tutto)</span></label>
-          <div class="box" style="position:relative"><input id="hTot" class="unit" type="number" min="0" placeholder="97,75"><span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:12px;color:var(--muted)">ore</span></div>
+          <div class="duo">
+            <div class="box"><input id="hTotH" class="unit" type="number" min="0" placeholder="97"><span>ore</span></div>
+            <div class="box"><input id="hTotM" class="unit" type="number" min="0" max="59" placeholder="45"><span>min</span></div>
+          </div>
         </div>
 
         <p class="subhead">Di cui con maggiorazione <small>(già comprese nel totale — le trovi nell'app)</small></p>
@@ -181,22 +188,34 @@
         <div class="row">
           <span class="dot" style="background:#38bdf8"></span>
           <div class="lab">Ore al +18%<small>di solito sabato</small></div>
-          <div class="in"><input id="h18" type="number" min="0" placeholder="0"><span>h</span></div>
+          <div class="in2">
+            <div class="mini"><input id="h18H" type="number" min="0" placeholder="0"><span>h</span></div>
+            <div class="mini"><input id="h18M" type="number" min="0" max="59" placeholder="0"><span>m</span></div>
+          </div>
         </div>
         <div class="row">
           <span class="dot" style="background:#818cf8"></span>
           <div class="lab">Ore notturne +25%<small>lavoro di notte</small></div>
-          <div class="in"><input id="h25" type="number" min="0" placeholder="0"><span>h</span></div>
+          <div class="in2">
+            <div class="mini"><input id="h25H" type="number" min="0" placeholder="0"><span>h</span></div>
+            <div class="mini"><input id="h25M" type="number" min="0" max="59" placeholder="0"><span>m</span></div>
+          </div>
         </div>
         <div class="row">
           <span class="dot" style="background:#a78bfa"></span>
           <div class="lab">Ore al +35%<small>di solito domenica</small></div>
-          <div class="in"><input id="h35" type="number" min="0" placeholder="0"><span>h</span></div>
+          <div class="in2">
+            <div class="mini"><input id="h35H" type="number" min="0" placeholder="0"><span>h</span></div>
+            <div class="mini"><input id="h35M" type="number" min="0" max="59" placeholder="0"><span>m</span></div>
+          </div>
         </div>
         <div class="row">
           <span class="dot" style="background:#f472b6"></span>
           <div class="lab">Ore al +50%<small>festivi / straordinario</small></div>
-          <div class="in"><input id="h50" type="number" min="0" placeholder="0"><span>h</span></div>
+          <div class="in2">
+            <div class="mini"><input id="h50H" type="number" min="0" placeholder="0"><span>h</span></div>
+            <div class="mini"><input id="h50M" type="number" min="0" max="59" placeholder="0"><span>m</span></div>
+          </div>
         </div>
 
         <p class="subhead">Buoni pasto</p>
@@ -275,6 +294,17 @@
     var h = Math.floor(totMin/60), m = Math.round(totMin%60);
     return h + (h===1?' ora':' ore') + (m>0 ? ' e '+m+' min' : '');
   }
+  // legge una coppia ore+minuti e restituisce ore decimali (null se non valido)
+  function hm(idH, idM){
+    var H = num(idH), M = num(idM);
+    if(H === null || M === null) return null;
+    return H + M/60;
+  }
+  // ore decimali -> "61h 15m"
+  function hmShort(dec){
+    var tot = Math.round(dec*60), H = Math.floor(tot/60), M = tot%60;
+    return M>0 ? H+'h '+M+'m' : H+'h';
+  }
 
   // ---------- tabs ----------
   document.querySelectorAll('.tab').forEach(function(t){
@@ -313,8 +343,8 @@
     var err = document.getElementById('errPaga'), res = document.getElementById('resPaga');
     err.classList.remove('show'); res.classList.remove('show');
 
-    var totH = num('hTot');
-    var h = { h18:num('h18'), h25:num('h25'), h35:num('h35'), h50:num('h50') };
+    var totH = hm('hTotH','hTotM');
+    var h = { h18:hm('h18H','h18M'), h25:hm('h25H','h25M'), h35:hm('h35H','h35M'), h50:hm('h50H','h50M') };
     var turni = num('turniPaga');
     var r = { norm:num('rNorm'), h18:num('r18'), h25:num('r25'), h35:num('r35'), h50:num('r50'), net:num('rNet'), buono:num('rBuono') };
 
@@ -328,7 +358,7 @@
 
     var maggH = h.h18 + h.h25 + h.h35 + h.h50;
     if(maggH > totH + 1e-9){
-      err.textContent='Le ore con maggiorazione ('+maggH.toString().replace('.',',')+'h) superano le ore totali ('+totH.toString().replace('.',',')+'h).';
+      err.textContent='Le ore con maggiorazione ('+hmShort(maggH)+') superano le ore totali ('+hmShort(totH)+').';
       err.classList.add('show'); return;
     }
     var hNorm = totH - maggH; // ore senza maggiorazione = resto
@@ -338,11 +368,10 @@
     var buoni = turni * r.buono;
     var totale = netto + buoni;
 
-    document.getElementById('pagaHours').textContent = oreTxt(totH*60) + ' ('+ totH.toString().replace('.',',') +'h)';
+    document.getElementById('pagaHours').textContent = oreTxt(totH*60) + ' ('+ totH.toFixed(2).replace('.',',') +'h)';
     document.getElementById('pagaLordo').textContent = euro(lordo);
     document.getElementById('pagaLordoSub').textContent =
-      hNorm.toString().replace('.',',') + 'h normali' +
-      (maggH>0 ? ' + ' + maggH.toString().replace('.',',') + 'h maggiorate' : '');
+      hmShort(hNorm) + ' normali' + (maggH>0 ? ' + ' + hmShort(maggH) + ' maggiorate' : '');
     document.getElementById('pagaNetto').textContent = euro(netto);
     document.getElementById('pagaBuoni').textContent = euro(buoni);
     document.getElementById('pagaBuoniSub').textContent = turni.toString().replace('.',',') + ' turni × ' + euro(r.buono);
