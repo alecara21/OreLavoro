@@ -15,8 +15,8 @@
     --line:#e5e7eb;
     --accent:#4f46e5;
     --accent-soft:#eef2ff;
-    --ok1:#4f46e5;
-    --ok2:#7c3aed;
+    --green:#059669;
+    --green-soft:#ecfdf5;
     --radius:18px;
     --shadow:0 20px 50px rgba(31,20,80,.25);
   }
@@ -25,219 +25,299 @@
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     min-height:100vh;
     display:flex;
-    align-items:center;
+    align-items:flex-start;
     justify-content:center;
-    padding:24px;
+    padding:24px 16px 60px;
     color:var(--ink);
     background:linear-gradient(135deg,var(--bg1),var(--bg2));
   }
-  .wrap{width:100%;max-width:460px}
-  .brand{
-    text-align:center;
-    color:#fff;
-    margin-bottom:22px;
+  .wrap{width:100%;max-width:480px}
+  .brand{text-align:center;color:#fff;margin-bottom:20px}
+  .brand h1{font-size:26px;letter-spacing:.5px;font-weight:800;text-transform:uppercase}
+  .brand p{font-size:14px;opacity:.85;margin-top:6px}
+
+  .tabs{display:flex;gap:8px;margin-bottom:16px;background:rgba(255,255,255,.15);padding:5px;border-radius:14px}
+  .tab{
+    flex:1;text-align:center;padding:11px 8px;border-radius:10px;
+    font-size:14px;font-weight:700;color:#fff;cursor:pointer;
+    transition:background .15s,color .15s;user-select:none;
   }
-  .brand h1{
-    font-size:26px;
-    letter-spacing:.5px;
-    font-weight:800;
-    text-transform:uppercase;
-  }
-  .brand p{
-    font-size:14px;
-    opacity:.85;
-    margin-top:6px;
-  }
-  .card{
-    background:var(--card);
-    border-radius:var(--radius);
-    box-shadow:var(--shadow);
-    padding:26px 22px;
-  }
-  .field{margin-bottom:18px}
-  .field > label{
-    display:block;
-    font-size:13px;
-    font-weight:700;
-    margin-bottom:8px;
-    color:var(--ink);
-  }
-  .field .hint{
-    font-weight:400;
-    color:var(--muted);
-    font-size:12px;
-  }
+  .tab.active{background:#fff;color:var(--accent)}
+
+  .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px 20px}
+  .panel{display:none}
+  .panel.active{display:block;animation:fade .2s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+  .field{margin-bottom:16px}
+  .field > label{display:block;font-size:13px;font-weight:700;margin-bottom:8px;color:var(--ink)}
+  .field .hint{font-weight:400;color:var(--muted);font-size:12px}
   .duo{display:flex;gap:10px}
   .duo .box{flex:1;position:relative}
-  .duo .box span{
-    position:absolute;
-    right:12px;
-    top:50%;
-    transform:translateY(-50%);
-    font-size:12px;
-    color:var(--muted);
-    pointer-events:none;
-  }
+  .duo .box span{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:12px;color:var(--muted);pointer-events:none}
+
   input[type="number"]{
-    width:100%;
-    padding:13px 40px 13px 13px;
-    font-size:16px;
-    border:1.5px solid var(--line);
-    border-radius:12px;
-    outline:none;
-    transition:border-color .15s,box-shadow .15s;
-    -moz-appearance:textfield;
+    width:100%;padding:13px;font-size:16px;border:1.5px solid var(--line);
+    border-radius:12px;outline:none;transition:border-color .15s,box-shadow .15s;-moz-appearance:textfield;
   }
-  input.solo{padding-right:13px}
-  input[type="number"]::-webkit-outer-spin-button,
-  input[type="number"]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
-  input:focus{
-    border-color:var(--accent);
-    box-shadow:0 0 0 4px var(--accent-soft);
+  input.unit{padding-right:44px}
+  input[type="number"]::-webkit-outer-spin-button,input[type="number"]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  input:focus{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+
+  .row{display:flex;align-items:center;gap:10px;margin-bottom:11px}
+  .row .lab{flex:1;font-size:14px;font-weight:600}
+  .row .lab small{display:block;font-weight:400;color:var(--muted);font-size:11.5px}
+  .row .in{width:110px;position:relative}
+  .row .in span{position:absolute;right:11px;top:50%;transform:translateY(-50%);font-size:12px;color:var(--muted);pointer-events:none}
+  .dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
+
+  button.calc{
+    width:100%;margin-top:8px;padding:15px;font-size:16px;font-weight:800;letter-spacing:.4px;
+    color:#fff;background:linear-gradient(135deg,var(--bg1),var(--bg2));border:none;border-radius:12px;
+    cursor:pointer;transition:transform .08s,filter .15s;text-transform:uppercase;
   }
-  button{
-    width:100%;
-    margin-top:6px;
-    padding:15px;
-    font-size:16px;
-    font-weight:800;
-    letter-spacing:.4px;
-    color:#fff;
-    background:linear-gradient(135deg,var(--ok1),var(--ok2));
-    border:none;
-    border-radius:12px;
-    cursor:pointer;
-    transition:transform .08s,filter .15s;
-    text-transform:uppercase;
-  }
-  button:hover{filter:brightness(1.05)}
-  button:active{transform:scale(.98)}
-  .result{
-    margin-top:20px;
-    padding:20px;
-    border-radius:14px;
-    background:var(--accent-soft);
-    text-align:center;
-    display:none;
-  }
-  .result.show{display:block;animation:pop .25s ease}
-  @keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-  .result .lbl{font-size:13px;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
-  .result .big{font-size:34px;font-weight:800;margin:6px 0;color:var(--ink)}
-  .result .sub{font-size:13px;color:var(--muted)}
-  .err{
-    margin-top:14px;
-    color:#b91c1c;
-    background:#fef2f2;
-    border:1px solid #fecaca;
-    padding:10px 12px;
-    border-radius:10px;
-    font-size:13px;
-    display:none;
-  }
+  button.calc:hover{filter:brightness(1.05)}
+  button.calc:active{transform:scale(.98)}
+
+  .result{margin-top:18px;border-radius:14px;overflow:hidden;display:none}
+  .result.show{display:block;animation:fade .25s ease}
+  .res-block{padding:18px 16px;text-align:center}
+  .res-block .lbl{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+  .res-block .big{font-size:30px;font-weight:800;margin:4px 0}
+  .res-block .sub{font-size:12.5px;color:var(--muted)}
+  .res-hours{background:var(--accent-soft)}
+  .res-hours .lbl{color:var(--accent)}
+  .res-gross{background:#f9fafb;border-top:1px solid var(--line)}
+  .res-gross .lbl{color:var(--ink)}
+  .res-net{background:var(--green-soft);border-top:1px solid var(--line)}
+  .res-net .lbl{color:var(--green)}
+  .res-net .big{color:var(--green)}
+
+  .err{margin-top:14px;color:#b91c1c;background:#fef2f2;border:1px solid #fecaca;padding:10px 12px;border-radius:10px;font-size:13px;display:none}
   .err.show{display:block}
-  footer{
-    text-align:center;
-    color:#fff;
-    opacity:.75;
-    font-size:12px;
-    margin-top:18px;
-  }
+
+  details{margin-top:18px;border-top:1px solid var(--line);padding-top:14px}
+  details summary{cursor:pointer;font-size:13px;font-weight:700;color:var(--muted);list-style:none;display:flex;align-items:center;gap:6px}
+  details summary::-webkit-details-marker{display:none}
+  details summary::before{content:"⚙";font-size:14px}
+  details[open] summary{margin-bottom:12px}
+  .set-note{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:12px}
+  .set-row{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+  .set-row label{flex:1;font-size:13px}
+  .set-row .in{width:120px;position:relative}
+  .set-row .in span{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--muted);pointer-events:none}
+  .set-row input{padding:9px 34px 9px 10px;font-size:14px}
+
+  footer{text-align:center;color:#fff;opacity:.75;font-size:12px;margin-top:18px}
 </style>
 </head>
 <body>
   <div class="wrap">
     <div class="brand">
       <h1>DLZ per Disabili</h1>
-      <p>Calcolo ore totali del mese</p>
+      <p>Ore e stipendio del mese</p>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" data-tab="ore">⏱ Ore totali</div>
+      <div class="tab" data-tab="paga">💶 Stipendio</div>
     </div>
 
     <div class="card">
-      <div class="field">
-        <label>Ore già lavorate <span class="hint">(quanto sei adesso)</span></label>
-        <div class="duo">
-          <div class="box"><input id="oreH" class="solo" type="number" min="0" placeholder="26"><span></span></div>
-          <div class="box"><input id="oreM" type="number" min="0" max="59" placeholder="30"><span>min</span></div>
+
+      <!-- ============ PANEL ORE ============ -->
+      <div class="panel active" id="panel-ore">
+        <div class="field">
+          <label>Ore già lavorate <span class="hint">(a quanto sei adesso)</span></label>
+          <div class="duo">
+            <div class="box"><input id="oreH" class="unit" type="number" min="0" placeholder="26"><span>ore</span></div>
+            <div class="box"><input id="oreM" class="unit" type="number" min="0" max="59" placeholder="30"><span>min</span></div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Turni rimanenti <span class="hint">(quanti te ne mancano)</span></label>
+          <input id="turni" type="number" min="0" placeholder="5">
+        </div>
+
+        <div class="field">
+          <label>Durata di un turno <span class="hint">(di base 4h 15min)</span></label>
+          <div class="duo">
+            <div class="box"><input id="durH" class="unit" type="number" min="0" placeholder="4"><span>ore</span></div>
+            <div class="box"><input id="durM" class="unit" type="number" min="0" max="59" placeholder="15"><span>min</span></div>
+          </div>
+        </div>
+
+        <button class="calc" id="calcOre">Calcola ore</button>
+
+        <div class="err" id="errOre"></div>
+
+        <div class="result" id="resOre">
+          <div class="res-block res-hours">
+            <div class="lbl">Ore totali del mese</div>
+            <div class="big" id="oreBig">—</div>
+            <div class="sub" id="oreSub"></div>
+          </div>
         </div>
       </div>
 
-      <div class="field">
-        <label>Turni rimanenti <span class="hint">(quanti te ne mancano)</span></label>
-        <input id="turni" class="solo" type="number" min="0" placeholder="5">
-      </div>
+      <!-- ============ PANEL PAGA ============ -->
+      <div class="panel" id="panel-paga">
+        <p class="set-note" style="margin-top:2px">
+          Inserisci quante ore hai fatto per ogni tipo. Le maggiorazioni le trovi nell'app (es. sabato 18%, domenica 35%).
+        </p>
 
-      <div class="field">
-        <label>Durata di un turno <span class="hint">(di base 4h 15min)</span></label>
-        <div class="duo">
-          <div class="box"><input id="durH" class="solo" type="number" min="0" placeholder="4"><span></span></div>
-          <div class="box"><input id="durM" type="number" min="0" max="59" placeholder="15"><span>min</span></div>
+        <div class="row">
+          <span class="dot" style="background:#94a3b8"></span>
+          <div class="lab">Ore normali<small>nessuna maggiorazione</small></div>
+          <div class="in"><input id="hNorm" type="number" min="0" placeholder="0"><span>h</span></div>
         </div>
+        <div class="row">
+          <span class="dot" style="background:#38bdf8"></span>
+          <div class="lab">Ore al +18%<small>di solito sabato</small></div>
+          <div class="in"><input id="h18" type="number" min="0" placeholder="0"><span>h</span></div>
+        </div>
+        <div class="row">
+          <span class="dot" style="background:#818cf8"></span>
+          <div class="lab">Ore notturne +25%<small>lavoro di notte</small></div>
+          <div class="in"><input id="h25" type="number" min="0" placeholder="0"><span>h</span></div>
+        </div>
+        <div class="row">
+          <span class="dot" style="background:#a78bfa"></span>
+          <div class="lab">Ore al +35%<small>di solito domenica</small></div>
+          <div class="in"><input id="h35" type="number" min="0" placeholder="0"><span>h</span></div>
+        </div>
+        <div class="row">
+          <span class="dot" style="background:#f472b6"></span>
+          <div class="lab">Ore al +50%<small>festivi / straordinario</small></div>
+          <div class="in"><input id="h50" type="number" min="0" placeholder="0"><span>h</span></div>
+        </div>
+
+        <button class="calc" id="calcPaga">Calcola stipendio</button>
+
+        <div class="err" id="errPaga"></div>
+
+        <div class="result" id="resPaga">
+          <div class="res-block res-hours">
+            <div class="lbl">Ore totali</div>
+            <div class="big" id="pagaHours">—</div>
+          </div>
+          <div class="res-block res-gross">
+            <div class="lbl">Stipendio lordo</div>
+            <div class="big" id="pagaLordo">—</div>
+            <div class="sub" id="pagaLordoSub"></div>
+          </div>
+          <div class="res-block res-net">
+            <div class="lbl">Netto stimato in tasca</div>
+            <div class="big" id="pagaNetto">—</div>
+            <div class="sub">stima ricavata dalle tue buste paga · regolabile qui sotto</div>
+          </div>
+        </div>
+
+        <details>
+          <summary>Impostazioni paga oraria (dalle tue buste paga)</summary>
+          <p class="set-note">
+            Questi valori sono presi dalle tue buste paga (paga base 11,33 €/h + maggiorazioni). Puoi modificarli se cambiano.
+            Il <b>netto</b> è una stima: in media ti resta circa il 90% del lordo delle ore, perché 13ª/14ª e festività
+            compensano quasi tutte le tasse. Se lavori molte più ore, la percentuale netta scende un po'.
+          </p>
+          <div class="set-row"><label>Paga base normale</label><div class="in"><input id="rNorm" type="number" step="0.01" value="11.33"><span>€/h</span></div></div>
+          <div class="set-row"><label>Paga +18%</label><div class="in"><input id="r18" type="number" step="0.01" value="13.38"><span>€/h</span></div></div>
+          <div class="set-row"><label>Paga notturna +25%</label><div class="in"><input id="r25" type="number" step="0.01" value="14.18"><span>€/h</span></div></div>
+          <div class="set-row"><label>Paga +35%</label><div class="in"><input id="r35" type="number" step="0.01" value="15.32"><span>€/h</span></div></div>
+          <div class="set-row"><label>Paga +50%</label><div class="in"><input id="r50" type="number" step="0.01" value="17.03"><span>€/h</span></div></div>
+          <div class="set-row"><label>% netto sul lordo</label><div class="in"><input id="rNet" type="number" step="1" value="90"><span>%</span></div></div>
+        </details>
       </div>
 
-      <button id="calc">Calcola</button>
-
-      <div class="err" id="err"></div>
-
-      <div class="result" id="result">
-        <div class="lbl">Ore totali del mese</div>
-        <div class="big" id="big">—</div>
-        <div class="sub" id="sub"></div>
-      </div>
     </div>
 
-    <footer>DLZ per Disabili · calcolo ore Amazon</footer>
+    <footer>DLZ per Disabili · calcolo ore &amp; stipendio Amazon</footer>
   </div>
 
 <script>
-  function val(id){
-    var v = document.getElementById(id).value.trim();
+  // ---------- util ----------
+  function num(id){
+    var el = document.getElementById(id);
+    var v = el.value.trim();
     if(v === '') return 0;
+    v = v.replace(',', '.');
     var n = Number(v);
-    return isNaN(n) || n < 0 ? null : n;
+    return (isNaN(n) || n < 0) ? null : n;
+  }
+  function euro(n){
+    return n.toLocaleString('it-IT',{minimumFractionDigits:2,maximumFractionDigits:2}) + ' €';
+  }
+  function oreTxt(totMin){
+    var h = Math.floor(totMin/60), m = Math.round(totMin%60);
+    return h + (h===1?' ora':' ore') + (m>0 ? ' e '+m+' min' : '');
   }
 
-  function calcola(){
-    var err = document.getElementById('err');
-    var res = document.getElementById('result');
-    err.classList.remove('show');
-    res.classList.remove('show');
+  // ---------- tabs ----------
+  document.querySelectorAll('.tab').forEach(function(t){
+    t.addEventListener('click', function(){
+      document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('active')});
+      document.querySelectorAll('.panel').forEach(function(x){x.classList.remove('active')});
+      t.classList.add('active');
+      document.getElementById('panel-'+t.dataset.tab).classList.add('active');
+    });
+  });
 
-    var oreH = val('oreH'), oreM = val('oreM');
-    var turni = val('turni');
-    var durH = val('durH'), durM = val('durM');
+  // ---------- calcolo ORE ----------
+  function calcOre(){
+    var err = document.getElementById('errOre'), res = document.getElementById('resOre');
+    err.classList.remove('show'); res.classList.remove('show');
 
-    if([oreH,oreM,turni,durH,durM].some(function(x){return x === null;})){
-      err.textContent = 'Controlla i valori: usa solo numeri positivi.';
-      err.classList.add('show');
-      return;
+    var oreH=num('oreH'), oreM=num('oreM'), turni=num('turni'), durH=num('durH'), durM=num('durM');
+    if([oreH,oreM,turni,durH,durM].some(function(x){return x===null})){
+      err.textContent='Controlla i valori: usa solo numeri positivi.'; err.classList.add('show'); return;
     }
+    if(durH===0 && durM===0){ durH=4; durM=15; }
 
-    // durata turno di default 4h 15min se lasciata vuota
-    if(durH === 0 && durM === 0){ durH = 4; durM = 15; }
+    var minFatti = oreH*60 + oreM;
+    var minPerTurno = durH*60 + durM;
+    var totMin = minFatti + turni*minPerTurno;
 
-    var minGiaFatti = oreH * 60 + oreM;
-    var minPerTurno = durH * 60 + durM;
-    var minRimanenti = turni * minPerTurno;
-    var totMin = minGiaFatti + minRimanenti;
-
-    var h = Math.floor(totMin / 60);
-    var m = totMin % 60;
-    var decimale = (totMin / 60).toFixed(2).replace('.', ',');
-
-    document.getElementById('big').textContent =
-      h + (h === 1 ? ' ora' : ' ore') + (m > 0 ? ' e ' + m + ' min' : '');
-
-    document.getElementById('sub').textContent =
-      'Pari a ' + decimale + ' ore · ' +
-      (Math.floor(minGiaFatti/60)) + 'h ' + (minGiaFatti%60) + 'm già fatte + ' +
-      turni + ' turni da ' + durH + 'h ' + durM + 'm';
-
+    document.getElementById('oreBig').textContent = oreTxt(totMin);
+    document.getElementById('oreSub').textContent =
+      'Pari a ' + (totMin/60).toFixed(2).replace('.',',') + ' ore · ' +
+      oreTxt(minFatti) + ' già fatte + ' + turni + ' turni da ' + oreTxt(minPerTurno);
     res.classList.add('show');
   }
 
-  document.getElementById('calc').addEventListener('click', calcola);
+  // ---------- calcolo PAGA ----------
+  function calcPaga(){
+    var err = document.getElementById('errPaga'), res = document.getElementById('resPaga');
+    err.classList.remove('show'); res.classList.remove('show');
+
+    var h = { norm:num('hNorm'), h18:num('h18'), h25:num('h25'), h35:num('h35'), h50:num('h50') };
+    var r = { norm:num('rNorm'), h18:num('r18'), h25:num('r25'), h35:num('r35'), h50:num('r50'), net:num('rNet') };
+
+    var allVals = [h.norm,h.h18,h.h25,h.h35,h.h50,r.norm,r.h18,r.h25,r.h35,r.h50,r.net];
+    if(allVals.some(function(x){return x===null})){
+      err.textContent='Controlla i valori: usa solo numeri positivi.'; err.classList.add('show'); return;
+    }
+
+    var totH = h.norm + h.h18 + h.h25 + h.h35 + h.h50;
+    if(totH === 0){
+      err.textContent='Inserisci almeno un’ora in una delle categorie.'; err.classList.add('show'); return;
+    }
+
+    var lordo = h.norm*r.norm + h.h18*r.h18 + h.h25*r.h25 + h.h35*r.h35 + h.h50*r.h50;
+    var netto = lordo * (r.net/100);
+
+    document.getElementById('pagaHours').textContent = oreTxt(totH*60) + ' ('+ totH.toString().replace('.',',') +'h)';
+    document.getElementById('pagaLordo').textContent = euro(lordo);
+    document.getElementById('pagaLordoSub').textContent = 'per ' + totH.toString().replace('.',',') + ' ore lavorate';
+    document.getElementById('pagaNetto').textContent = euro(netto);
+    res.classList.add('show');
+  }
+
+  document.getElementById('calcOre').addEventListener('click', calcOre);
+  document.getElementById('calcPaga').addEventListener('click', calcPaga);
   document.addEventListener('keydown', function(e){
-    if(e.key === 'Enter') calcola();
+    if(e.key !== 'Enter') return;
+    if(document.getElementById('panel-ore').classList.contains('active')) calcOre(); else calcPaga();
   });
 </script>
 </body>
