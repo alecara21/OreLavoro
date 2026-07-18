@@ -233,24 +233,25 @@
           <div class="res-block res-hours">
             <div class="lbl">Ore totali</div>
             <div class="big" id="pagaHours">—</div>
+            <div class="sub" id="pagaHoursSub"></div>
           </div>
           <div class="res-block res-gross">
-            <div class="lbl">Stipendio lordo</div>
+            <div class="lbl">Stipendio lordo (ore + 13ª/14ª)</div>
             <div class="big" id="pagaLordo">—</div>
             <div class="sub" id="pagaLordoSub"></div>
           </div>
           <div class="res-block res-net">
-            <div class="lbl">Netto stimato in tasca</div>
+            <div class="lbl">Netto stimato in tasca (bonifico)</div>
             <div class="big" id="pagaNetto">—</div>
-            <div class="sub">stima ricavata dalle tue buste paga · regolabile qui sotto</div>
+            <div class="sub">stima dopo le tasse · tarata sulle tue buste paga · regolabile</div>
           </div>
           <div class="res-block res-buoni">
-            <div class="lbl">Buoni pasto</div>
+            <div class="lbl">Buoni pasto (carta pasto, a parte)</div>
             <div class="big" id="pagaBuoni">—</div>
             <div class="sub" id="pagaBuoniSub"></div>
           </div>
           <div class="res-block res-tot">
-            <div class="lbl">Totale (netto + buoni pasto)</div>
+            <div class="lbl">Valore totale (bonifico + buoni)</div>
             <div class="big" id="pagaTot">—</div>
           </div>
         </div>
@@ -258,16 +259,18 @@
         <details>
           <summary>Impostazioni paga oraria (dalle tue buste paga)</summary>
           <p class="set-note">
-            Questi valori sono presi dalle tue buste paga (paga base 11,33 €/h + maggiorazioni). Puoi modificarli se cambiano.
-            Il <b>netto</b> è una stima: in media ti resta circa il 90% del lordo delle ore, perché 13ª/14ª e festività
-            compensano quasi tutte le tasse. Se lavori molte più ore, la percentuale netta scende un po'.
+            Paga oraria presa dalle tue buste paga (base 11,33 €/h + maggiorazioni). Il <b>lordo</b> include
+            anche 13ª e 14ª mensilità (te le pagano ogni mese come rateo). Il <b>netto</b> è una stima dopo le tasse
+            (INPS + IRPEF), tarata sulle tue buste (giugno viene ≈ 1.268 €). Può variare di qualche % a seconda di
+            festività e ferie del mese. I <b>buoni pasto</b> vanno su una carta a parte, non nel bonifico.
           </p>
           <div class="set-row"><label>Paga base normale</label><div class="in"><input id="rNorm" type="number" step="0.01" value="11.33"><span>€/h</span></div></div>
           <div class="set-row"><label>Paga +18%</label><div class="in"><input id="r18" type="number" step="0.01" value="13.38"><span>€/h</span></div></div>
           <div class="set-row"><label>Paga notturna +25%</label><div class="in"><input id="r25" type="number" step="0.01" value="14.18"><span>€/h</span></div></div>
           <div class="set-row"><label>Paga +35%</label><div class="in"><input id="r35" type="number" step="0.01" value="15.32"><span>€/h</span></div></div>
           <div class="set-row"><label>Paga +50%</label><div class="in"><input id="r50" type="number" step="0.01" value="17.03"><span>€/h</span></div></div>
-          <div class="set-row"><label>% netto sul lordo</label><div class="in"><input id="rNet" type="number" step="1" value="90"><span>%</span></div></div>
+          <div class="set-row"><label>13ª + 14ª (rateo)</label><div class="in"><input id="rRatei" type="number" step="0.1" value="16.6"><span>%</span></div></div>
+          <div class="set-row"><label>% netto dopo tasse</label><div class="in"><input id="rNet" type="number" step="0.1" value="87.5"><span>%</span></div></div>
           <div class="set-row"><label>Buono pasto a turno</label><div class="in"><input id="rBuono" type="number" step="0.01" value="8"><span>€</span></div></div>
         </details>
       </div>
@@ -346,9 +349,10 @@
     var totH = hm('hTotH','hTotM');
     var h = { h18:hm('h18H','h18M'), h25:hm('h25H','h25M'), h35:hm('h35H','h35M'), h50:hm('h50H','h50M') };
     var turni = num('turniPaga');
-    var r = { norm:num('rNorm'), h18:num('r18'), h25:num('r25'), h35:num('r35'), h50:num('r50'), net:num('rNet'), buono:num('rBuono') };
+    var r = { norm:num('rNorm'), h18:num('r18'), h25:num('r25'), h35:num('r35'), h50:num('r50'),
+              ratei:num('rRatei'), net:num('rNet'), buono:num('rBuono') };
 
-    var allVals = [totH,h.h18,h.h25,h.h35,h.h50,turni,r.norm,r.h18,r.h25,r.h35,r.h50,r.net,r.buono];
+    var allVals = [totH,h.h18,h.h25,h.h35,h.h50,turni,r.norm,r.h18,r.h25,r.h35,r.h50,r.ratei,r.net,r.buono];
     if(allVals.some(function(x){return x===null})){
       err.textContent='Controlla i valori: usa solo numeri positivi.'; err.classList.add('show'); return;
     }
@@ -363,15 +367,19 @@
     }
     var hNorm = totH - maggH; // ore senza maggiorazione = resto
 
-    var lordo = hNorm*r.norm + h.h18*r.h18 + h.h25*r.h25 + h.h35*r.h35 + h.h50*r.h50;
-    var netto = lordo * (r.net/100);
-    var buoni = turni * r.buono;
+    var lordoOre = hNorm*r.norm + h.h18*r.h18 + h.h25*r.h25 + h.h35*r.h35 + h.h50*r.h50;
+    var ratei = lordoOre * (r.ratei/100);      // 13ª + 14ª pagate mensilmente
+    var lordo = lordoOre + ratei;              // lordo totale del mese
+    var netto = lordo * (r.net/100);           // dopo INPS + IRPEF
+    var buoni = turni * r.buono;               // carta pasto, a parte
     var totale = netto + buoni;
 
     document.getElementById('pagaHours').textContent = oreTxt(totH*60) + ' ('+ totH.toFixed(2).replace('.',',') +'h)';
+    document.getElementById('pagaHoursSub').textContent =
+      hmShort(hNorm) + ' normali' + (maggH>0 ? ' + ' + hmShort(maggH) + ' maggiorate' : '');
     document.getElementById('pagaLordo').textContent = euro(lordo);
     document.getElementById('pagaLordoSub').textContent =
-      hmShort(hNorm) + ' normali' + (maggH>0 ? ' + ' + hmShort(maggH) + ' maggiorate' : '');
+      euro(lordoOre) + ' ore + ' + euro(ratei) + ' di 13ª/14ª';
     document.getElementById('pagaNetto').textContent = euro(netto);
     document.getElementById('pagaBuoni').textContent = euro(buoni);
     document.getElementById('pagaBuoniSub').textContent = turni.toString().replace('.',',') + ' turni × ' + euro(r.buono);
