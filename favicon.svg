@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="DLZ per Discalculici">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#4f46e5"/>
+      <stop offset="1" stop-color="#7c3aed"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+  <circle cx="12" cy="12" r="20" fill="#ffffff" opacity="0.06"/>
+  <circle cx="54" cy="56" r="22" fill="#ffffff" opacity="0.06"/>
+  <text x="32" y="34" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif"
+        font-weight="900" font-size="26" letter-spacing="1" fill="#ffffff">DLZ</text>
+  <text x="32" y="46" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif"
+        font-weight="700" font-size="6.2" letter-spacing="0.6" fill="#ffffff" opacity="0.92">PER DISCALCULICI</text>
+</svg>
