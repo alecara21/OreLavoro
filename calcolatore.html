@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#4f46e5">
+<title>DLZ PER DISABILI</title>
+<style>
+  :root{
+    --bg1:#4f46e5;
+    --bg2:#7c3aed;
+    --card:#ffffff;
+    --ink:#1e1b2e;
+    --muted:#6b7280;
+    --line:#e5e7eb;
+    --accent:#4f46e5;
+    --accent-soft:#eef2ff;
+    --ok1:#4f46e5;
+    --ok2:#7c3aed;
+    --radius:18px;
+    --shadow:0 20px 50px rgba(31,20,80,.25);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+    color:var(--ink);
+    background:linear-gradient(135deg,var(--bg1),var(--bg2));
+  }
+  .wrap{width:100%;max-width:460px}
+  .brand{
+    text-align:center;
+    color:#fff;
+    margin-bottom:22px;
+  }
+  .brand h1{
+    font-size:26px;
+    letter-spacing:.5px;
+    font-weight:800;
+    text-transform:uppercase;
+  }
+  .brand p{
+    font-size:14px;
+    opacity:.85;
+    margin-top:6px;
+  }
+  .card{
+    background:var(--card);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding:26px 22px;
+  }
+  .field{margin-bottom:18px}
+  .field > label{
+    display:block;
+    font-size:13px;
+    font-weight:700;
+    margin-bottom:8px;
+    color:var(--ink);
+  }
+  .field .hint{
+    font-weight:400;
+    color:var(--muted);
+    font-size:12px;
+  }
+  .duo{display:flex;gap:10px}
+  .duo .box{flex:1;position:relative}
+  .duo .box span{
+    position:absolute;
+    right:12px;
+    top:50%;
+    transform:translateY(-50%);
+    font-size:12px;
+    color:var(--muted);
+    pointer-events:none;
+  }
+  input[type="number"]{
+    width:100%;
+    padding:13px 40px 13px 13px;
+    font-size:16px;
+    border:1.5px solid var(--line);
+    border-radius:12px;
+    outline:none;
+    transition:border-color .15s,box-shadow .15s;
+    -moz-appearance:textfield;
+  }
+  input.solo{padding-right:13px}
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  input:focus{
+    border-color:var(--accent);
+    box-shadow:0 0 0 4px var(--accent-soft);
+  }
+  button{
+    width:100%;
+    margin-top:6px;
+    padding:15px;
+    font-size:16px;
+    font-weight:800;
+    letter-spacing:.4px;
+    color:#fff;
+    background:linear-gradient(135deg,var(--ok1),var(--ok2));
+    border:none;
+    border-radius:12px;
+    cursor:pointer;
+    transition:transform .08s,filter .15s;
+    text-transform:uppercase;
+  }
+  button:hover{filter:brightness(1.05)}
+  button:active{transform:scale(.98)}
+  .result{
+    margin-top:20px;
+    padding:20px;
+    border-radius:14px;
+    background:var(--accent-soft);
+    text-align:center;
+    display:none;
+  }
+  .result.show{display:block;animation:pop .25s ease}
+  @keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .result .lbl{font-size:13px;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+  .result .big{font-size:34px;font-weight:800;margin:6px 0;color:var(--ink)}
+  .result .sub{font-size:13px;color:var(--muted)}
+  .err{
+    margin-top:14px;
+    color:#b91c1c;
+    background:#fef2f2;
+    border:1px solid #fecaca;
+    padding:10px 12px;
+    border-radius:10px;
+    font-size:13px;
+    display:none;
+  }
+  .err.show{display:block}
+  footer{
+    text-align:center;
+    color:#fff;
+    opacity:.75;
+    font-size:12px;
+    margin-top:18px;
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="brand">
+      <h1>DLZ per Disabili</h1>
+      <p>Calcolo ore totali del mese</p>
+    </div>
+
+    <div class="card">
+      <div class="field">
+        <label>Ore già lavorate <span class="hint">(quanto sei adesso)</span></label>
+        <div class="duo">
+          <div class="box"><input id="oreH" class="solo" type="number" min="0" placeholder="26"><span></span></div>
+          <div class="box"><input id="oreM" type="number" min="0" max="59" placeholder="30"><span>min</span></div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Turni rimanenti <span class="hint">(quanti te ne mancano)</span></label>
+        <input id="turni" class="solo" type="number" min="0" placeholder="5">
+      </div>
+
+      <div class="field">
+        <label>Durata di un turno <span class="hint">(di base 4h 15min)</span></label>
+        <div class="duo">
+          <div class="box"><input id="durH" class="solo" type="number" min="0" placeholder="4"><span></span></div>
+          <div class="box"><input id="durM" type="number" min="0" max="59" placeholder="15"><span>min</span></div>
+        </div>
+      </div>
+
+      <button id="calc">Calcola</button>
+
+      <div class="err" id="err"></div>
+
+      <div class="result" id="result">
+        <div class="lbl">Ore totali del mese</div>
+        <div class="big" id="big">—</div>
+        <div class="sub" id="sub"></div>
+      </div>
+    </div>
+
+    <footer>DLZ per Disabili · calcolo ore Amazon</footer>
+  </div>
+
+<script>
+  function val(id){
+    var v = document.getElementById(id).value.trim();
+    if(v === '') return 0;
+    var n = Number(v);
+    return isNaN(n) || n < 0 ? null : n;
+  }
+
+  function calcola(){
+    var err = document.getElementById('err');
+    var res = document.getElementById('result');
+    err.classList.remove('show');
+    res.classList.remove('show');
+
+    var oreH = val('oreH'), oreM = val('oreM');
+    var turni = val('turni');
+    var durH = val('durH'), durM = val('durM');
+
+    if([oreH,oreM,turni,durH,durM].some(function(x){return x === null;})){
+      err.textContent = 'Controlla i valori: usa solo numeri positivi.';
+      err.classList.add('show');
+      return;
+    }
+
+    // durata turno di default 4h 15min se lasciata vuota
+    if(durH === 0 && durM === 0){ durH = 4; durM = 15; }
+
+    var minGiaFatti = oreH * 60 + oreM;
+    var minPerTurno = durH * 60 + durM;
+    var minRimanenti = turni * minPerTurno;
+    var totMin = minGiaFatti + minRimanenti;
+
+    var h = Math.floor(totMin / 60);
+    var m = totMin % 60;
+    var decimale = (totMin / 60).toFixed(2).replace('.', ',');
+
+    document.getElementById('big').textContent =
+      h + (h === 1 ? ' ora' : ' ore') + (m > 0 ? ' e ' + m + ' min' : '');
+
+    document.getElementById('sub').textContent =
+      'Pari a ' + decimale + ' ore · ' +
+      (Math.floor(minGiaFatti/60)) + 'h ' + (minGiaFatti%60) + 'm già fatte + ' +
+      turni + ' turni da ' + durH + 'h ' + durM + 'm';
+
+    res.classList.add('show');
+  }
+
+  document.getElementById('calc').addEventListener('click', calcola);
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Enter') calcola();
+  });
+</script>
+</body>
+</html>
