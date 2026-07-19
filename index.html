@@ -237,10 +237,20 @@
           </div>
         </div>
 
+        <p class="subhead">Ferie <small>(pagate a paga base, senza maggiorazione né buono pasto)</small></p>
+        <div class="row">
+          <span class="dot" style="background:#34d399"></span>
+          <div class="lab">Ore di ferie<small>ferie prese nel mese</small></div>
+          <div class="in2">
+            <div class="mini"><input id="ferieH" type="number" min="0" placeholder="0"><span>h</span></div>
+            <div class="mini"><input id="ferieM" type="number" min="0" max="59" placeholder="0"><span>m</span></div>
+          </div>
+        </div>
+
         <p class="subhead">Buoni pasto</p>
         <div class="row">
           <span class="dot" style="background:#f59e0b"></span>
-          <div class="lab">Turni lavorati<small>8 € di buono pasto a turno</small></div>
+          <div class="lab">Turni lavorati<small>8 € a turno — NON contare i giorni di ferie</small></div>
           <div class="in"><input id="turniPaga" type="number" min="0" placeholder="0"><span>turni</span></div>
         </div>
 
@@ -367,35 +377,40 @@
 
     var totH = hm('hTotH','hTotM');
     var h = { h18:hm('h18H','h18M'), h25:hm('h25H','h25M'), h35:hm('h35H','h35M'), h50:hm('h50H','h50M') };
+    var ferie = hm('ferieH','ferieM');
     var turni = num('turniPaga');
     var r = { norm:num('rNorm'), h18:num('r18'), h25:num('r25'), h35:num('r35'), h50:num('r50'),
               ratei:num('rRatei'), net:num('rNet'), buono:num('rBuono') };
 
-    var allVals = [totH,h.h18,h.h25,h.h35,h.h50,turni,r.norm,r.h18,r.h25,r.h35,r.h50,r.ratei,r.net,r.buono];
+    var allVals = [totH,h.h18,h.h25,h.h35,h.h50,ferie,turni,r.norm,r.h18,r.h25,r.h35,r.h50,r.ratei,r.net,r.buono];
     if(allVals.some(function(x){return x===null})){
       err.textContent='Controlla i valori: usa solo numeri positivi.'; err.classList.add('show'); return;
     }
-    if(totH === 0){
-      err.textContent='Inserisci le ore totali lavorate.'; err.classList.add('show'); return;
+    if(totH === 0 && ferie === 0){
+      err.textContent='Inserisci le ore lavorate (o le ore di ferie).'; err.classList.add('show'); return;
     }
 
     var maggH = h.h18 + h.h25 + h.h35 + h.h50;
     if(maggH > totH + 1e-9){
-      err.textContent='Le ore con maggiorazione ('+hmShort(maggH)+') superano le ore totali ('+hmShort(totH)+').';
+      err.textContent='Le ore con maggiorazione ('+hmShort(maggH)+') superano le ore lavorate ('+hmShort(totH)+').';
       err.classList.add('show'); return;
     }
-    var hNorm = totH - maggH; // ore senza maggiorazione = resto
+    var hNorm = totH - maggH; // ore lavorate senza maggiorazione = resto
+    var totOre = totH + ferie; // ore pagate totali (lavorate + ferie)
 
-    var lordoOre = hNorm*r.norm + h.h18*r.h18 + h.h25*r.h25 + h.h35*r.h35 + h.h50*r.h50;
+    // ferie pagate a paga base, senza maggiorazione
+    var lordoOre = hNorm*r.norm + h.h18*r.h18 + h.h25*r.h25 + h.h35*r.h35 + h.h50*r.h50 + ferie*r.norm;
     var ratei = lordoOre * (r.ratei/100);      // 13ª + 14ª pagate mensilmente
     var lordo = lordoOre + ratei;              // lordo totale del mese
     var netto = lordo * (r.net/100);           // dopo INPS + IRPEF
-    var buoni = turni * r.buono;               // carta pasto, a parte
+    var buoni = turni * r.buono;               // carta pasto, a parte (ferie escluse)
     var totale = netto + buoni;
 
-    document.getElementById('pagaHours').textContent = oreTxt(totH*60) + ' ('+ totH.toFixed(2).replace('.',',') +'h)';
+    document.getElementById('pagaHours').textContent = oreTxt(totOre*60) + ' ('+ totOre.toFixed(2).replace('.',',') +'h)';
     document.getElementById('pagaHoursSub').textContent =
-      hmShort(hNorm) + ' normali' + (maggH>0 ? ' + ' + hmShort(maggH) + ' maggiorate' : '');
+      hmShort(hNorm) + ' normali' +
+      (maggH>0 ? ' + ' + hmShort(maggH) + ' maggiorate' : '') +
+      (ferie>0 ? ' + ' + hmShort(ferie) + ' ferie' : '');
     document.getElementById('pagaLordo').textContent = euro(lordo);
     document.getElementById('pagaLordoSub').textContent =
       euro(lordoOre) + ' ore + ' + euro(ratei) + ' di 13ª/14ª';
